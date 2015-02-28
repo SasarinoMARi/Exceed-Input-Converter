@@ -13,6 +13,7 @@ namespace Exceed
     {
         public List<Order> myOrders = new List<Order>();
         List<Order> backupOrders;
+        public bool isAlwaysOnTop, isExitToHide;
 
         public ExceedSetting(List<Order> orders)
         {
@@ -59,6 +60,8 @@ namespace Exceed
 
         private void button3_Click(object sender, EventArgs e)
         {
+            isAlwaysOnTop = checkBox1.Checked;
+            isExitToHide = checkBox2.Checked;
             this.Close();
         }
 
@@ -76,5 +79,18 @@ namespace Exceed
                 item.Remove();
             }
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            var frm = new KeySelect();
+            frm.ShowDialog();
+        }
+
+        private void ExceedSetting_Shown(object sender, EventArgs e)
+        {
+            this.checkBox1.Checked = this.isAlwaysOnTop;
+            this.checkBox2.Checked = this.isExitToHide;
+        }
+
     }
 }

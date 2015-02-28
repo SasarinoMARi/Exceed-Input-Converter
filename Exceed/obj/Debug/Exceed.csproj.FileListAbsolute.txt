@@ -1,1 +1,13 @@
 C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\bin\Debug\Exceed.exe.config
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\bin\Debug\Exceed.exe
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\bin\Debug\Exceed.pdb
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\bin\Debug\InputSimulator.dll
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\bin\Debug\MouseKeyboardActivityMonitor.dll
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.ExceedMain.resources
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.ExceedSetting.resources
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.KeySelect.resources
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.NewOrder.resources
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.Properties.Resources.resources
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.csproj.GenerateResource.Cache
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.exe
+C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.pdb

@@ -49,7 +49,7 @@ namespace Exceed
             if (!Stimulus.IsNullOrEmpty(myReaction) && !Stimulus.IsNullOrEmpty(myCondition))
             {
                 this.isOrderGenerated = true;
-                returnOrder = new Order(myCondition, myReaction);
+                returnOrder = new Order(myCondition, myReaction, checkBox1.Checked);
                 this.Close();
             }
             else

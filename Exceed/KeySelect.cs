@@ -14,15 +14,15 @@ namespace Exceed
     {
         public Stimulus myStimul;
         string[] mouseStimulsText = {
-                                              "Left Click",
-                                              "Right Click",
-                                              "Middle Click",
-                                              "X Increase",
-                                              "X Decrease",
-                                              "Y Increase",
-                                              "Y Decrease",
-                                              "W Increase",
-                                              "W Decrease"
+                                              "LEFT click",
+                                              "RIGHT click",
+                                              "WHEEL click",
+                                              "move to RIGHT",
+                                              "move to LEFT",
+                                              "move to UP",
+                                              "move to DOWN",
+                                              "WHEEL UP",
+                                              "WHEEL DOWN"
                                           };
         WindowsInput.VirtualKeyCode[] CodeEnums = (WindowsInput.VirtualKeyCode[])Enum.GetValues(typeof(WindowsInput.VirtualKeyCode));
         public KeySelect()
@@ -60,43 +60,37 @@ namespace Exceed
                 }
                 switch (comboBox3.Text)
                 {
-                    case "X Increase":
+                    case "move to RIGHT":
                         myStimul.XPosIncreased = true;
                         break;
-                    case "X Decrease":
+                    case "move to LEFT":
                         myStimul.XPosDecreased = true;
                         break;
-                    case "Y Increase":
+                    case "move to UP":
                         myStimul.YPosIncreased = true;
                         break;
-                    case "Y Decrease":
+                    case "move to DOWN":
                         myStimul.YPosDecreased = true;
                         break;
-                    case "W Increase":
+                    case "WHEEL UP":
                         myStimul.WheelIncreased = true;
                         break;
-                    case "W Decrease":
+                    case "WHEEL DOWN":
                         myStimul.WheelDecreased = true;
                         break;
-                    case "Left Click":
+                    case "LEFT click":
                         myStimul.LBDown = true;
                         break;
-                    case "Right Click":
+                    case "RIGHT click":
                         myStimul.RBDown = true;
                         break;
-                    case "Middle Click":
+                    case "WHEEL click":
                         myStimul.MBDown = true;
                         break;
                     default:
                         MessageBox.Show("Cant (._. )");
                         return;
                 }
-                if (string.IsNullOrWhiteSpace(textBox1.Text))
-                {
-                    MessageBox.Show("Cant (._. )");
-                    return;
-                }
-                myStimul.MouseSensivity = int.Parse(textBox1.Text);
             }
             
             this.Close();
@@ -144,12 +138,10 @@ namespace Exceed
                 case "Y Decrease":
                 case "W Increase":
                 case "W Decrease":
-                    textBox1.Enabled = true;
                     break;
                 case "Left Click":
                 case "Right Click":
                 case "Middle Click":
-                    textBox1.Enabled = false;
                     break;
             }
         }

@@ -18,10 +18,12 @@ namespace Exceed
 {
     public partial class ExceedMain : Form
     {
-        string datafilePath = "Exceed.dat";
+        string datafilePath = "KeyStore.dat";
+        string settingfilePath = "Setting.dat";
+
         public ExceedMain()
         {
-            LoadData(datafilePath);
+            InitializeComponent();
             m_KeyboardHookManager.KeyDown += m_KeyboardHookManager_KeyDown;
             m_KeyboardHookManager.KeyUp += m_KeyboardHookManager_KeyUp;
             m_MouseHookManager.MouseMove += m_MouseHookManager_MouseMove;
@@ -30,37 +32,43 @@ namespace Exceed
             m_MouseHookManager.MouseUp += m_MouseHookManager_MouseUp;
             m_KeyboardHookManager.Enabled = true;
 
-            InitializeComponent();
+            LoadData();
             Exceeder.RunWorkerAsync();
-
         }
 
 
         public bool isRunning = false; // Exceed System is Runnning?
         Stimulus Tick; // ThisTick Keyboard/Mouse Event
         List<Order> ExceedOrders = new List<Order>(); // Order List
-        public int MouseSensitivity;
 
         public void Start()
         {
-            isRunning = true; 
+            isRunning = true;
             m_MouseHookManager.Enabled = true;
+            m_KeyboardHookManager.Enabled = true;
 
             label1.Text = "Exceed is running.";
             this.Text = "Exceed : Running";
             button1.Text = "Stop";
             button2.Enabled = false;
+            대기중ToolStripMenuItem.Text = "작동중";
+            설정ToolStripMenuItem.Enabled = false;
+            notifyIcon1.ShowBalloonTip(3, "Exceed", "Exceed is Working", ToolTipIcon.None);
         }
 
         public void Stop()
         {
             isRunning = false;
             m_MouseHookManager.Enabled = false;
+            m_KeyboardHookManager.Enabled = false;
 
             label1.Text = "Exceed was suspend.";
             this.Text = "Exceed";
             button2.Enabled = true;
             button1.Text = "Run";
+            대기중ToolStripMenuItem.Text = "대기중";
+            설정ToolStripMenuItem.Enabled = true;
+            notifyIcon1.ShowBalloonTip(3, "Exceed", "Exceed is Suspend", ToolTipIcon.None);
         }
 
         private readonly KeyboardHookListener m_KeyboardHookManager = new KeyboardHookListener(new GlobalHooker());
@@ -83,7 +91,16 @@ namespace Exceed
                 if (!isRunning) Start();
                 else Stop();
             }
+
+#if DEBUG
+            if (e.KeyCode == Keys.F11)
+                InputSimulator.SimulateKeyDown(VirtualKeyCode.LSHIFT);
+#endif
             lastPressedKey = (VirtualKeyCode)e.KeyData;
+            if (ExceedOrders.Find(x =>
+                (x.blockKey == true) &&
+                (x.condition.PressingKey == (VirtualKeyCode)e.KeyData)
+                ) != null) e.SuppressKeyPress = true;
         }
 
         #endregion
@@ -141,7 +158,7 @@ namespace Exceed
             {
                 Tick.WheelIncreased = true;
             }
-            else if(e.Delta < 0)
+            else if (e.Delta < 0)
             {
                 Tick.WheelDecreased = true;
             }
@@ -167,7 +184,7 @@ namespace Exceed
                     if (MiddleKeyPressing) TickedStimuls.MBDown = true;
 
 #if DEBUG
-                    Console.WriteLine(TickedStimuls.ToString());
+                    //Console.WriteLine(TickedStimuls.ToString());
 #endif
 
                     foreach (var item in ExceedOrders)
@@ -182,31 +199,57 @@ namespace Exceed
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            foreach (var item in ExceedOrders)
+            if (this.isExitToHide && this.Visible)
             {
-                item.Release();
+                HIDE();
+                e.Cancel = true; ;
             }
+            else
+            {
+                foreach (var item in ExceedOrders)
+                {
+                    item.Release();
+                    InputSimulator.SimulateKeyUp(item.reaction.PressingKey);
+                }
 
-            SaveData(datafilePath);
+                SaveData();
+            }
         }
+
+        bool isExitToHide;
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var This = this;
-            var frm = new ExceedSetting(ExceedOrders);
-            frm.ShowDialog();
-            this.ExceedOrders = frm.myOrders.ToList();
+            OpenSetting();
         }
 
-        private bool LoadData(string path)
+        void OpenSetting()
+        {
+            var frm = new ExceedSetting(ExceedOrders);
+            frm.isAlwaysOnTop = this.TopMost;
+            frm.isExitToHide = this.isExitToHide;
+            var await = frm.ShowDialog();
+            this.TopMost = frm.isAlwaysOnTop;
+            this.isExitToHide = frm.isExitToHide;
+            this.ExceedOrders = frm.myOrders.ToList();
+
+        }
+
+        private bool LoadData()
         {
             try
             {
-                using (System.IO.Stream ReadStream = new FileStream(path, FileMode.Open))
+                using (System.IO.Stream ReadStream = new FileStream(datafilePath, FileMode.Open))
                 {
                     BinaryFormatter binFormatter = new BinaryFormatter();
                     ExceedOrders = binFormatter.Deserialize(ReadStream) as List<Order>;
-                    ReadStream.Close();
+                }
+                using (System.IO.Stream ReadStream = new FileStream(settingfilePath, FileMode.Open))
+                {
+                    var binFormatter = new StreamReader(ReadStream);
+                    this.TopMost = bool.Parse(binFormatter.ReadLine());
+                    this.isExitToHide = bool.Parse(binFormatter.ReadLine());
+                    binFormatter.Close();
                 }
                 return true;
             }
@@ -217,13 +260,19 @@ namespace Exceed
 
         }
 
-        private void SaveData(string path)
+        private void SaveData()
         {
-            using (System.IO.Stream WriteStream = new FileStream(path, FileMode.Create))
+            using (var WriteStream = new FileStream(datafilePath, FileMode.Create))
             {
-                BinaryFormatter binFormatter = new BinaryFormatter();
+                var binFormatter = new BinaryFormatter();
                 binFormatter.Serialize(WriteStream, ExceedOrders);
-                WriteStream.Close();
+            }
+            using (var WriteStream = new FileStream(settingfilePath, FileMode.Create))
+            {
+                var binFormatter = new StreamWriter(WriteStream);
+                binFormatter.WriteLine(this.TopMost);
+                binFormatter.WriteLine(this.isExitToHide);
+                binFormatter.Close();
             }
         }
 
@@ -231,6 +280,58 @@ namespace Exceed
         {
             if (isRunning) Stop();
             else Start();
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (this.Visible == false) this.Show();
+        }
+
+        private void 설정ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenSetting();
+        }
+
+        private void 종료ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            this.Close();
+        }
+
+        private void 보이기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (보이기ToolStripMenuItem.Text == "보이기") this.Show();
+            else
+            {
+                HIDE();
+            }
+        }
+
+        void HIDE()
+        {
+            this.Hide();
+            보이기ToolStripMenuItem.Text = "보이기";
+            notifyIcon1.ShowBalloonTip(3, "Exceed", "Hey! I'm on the tray!", ToolTipIcon.None);
+        }
+
+        private void ExceedMain_Shown(object sender, EventArgs e)
+        {
+            보이기ToolStripMenuItem.Text = "숨기기";
+        }
+
+        private void 시작ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (시작ToolStripMenuItem.Text == "시작")
+            {
+                this.Start();
+                시작ToolStripMenuItem.Text = "정지";
+            }
+            else
+            {
+
+                this.Stop();
+                시작ToolStripMenuItem.Text = "시작";
+            }
         }
 
     }
@@ -241,11 +342,13 @@ namespace Exceed
     {
         public Stimulus condition;
         public Stimulus reaction;
+        public bool blockKey;
 
-        public Order(Stimulus condition, Stimulus reaction)
+        public Order(Stimulus condition, Stimulus reaction, bool isBlockKey)
         {
             this.condition = condition;
             this.reaction = reaction;
+            this.blockKey = isBlockKey;
         }
 
         public void CheackOrder(Stimulus tickStimlus)
@@ -275,7 +378,7 @@ namespace Exceed
         public bool YPosIncreased, YPosDecreased;
         public bool WheelIncreased, WheelDecreased;
         public bool LBDown, RBDown, MBDown;
-        public int MouseSensivity;
+        const int MouseSensivity = 1;
 
         public VirtualKeyCode PressingKey;
 
@@ -300,7 +403,6 @@ namespace Exceed
         /// </summary>
         public void Press()
         {
-            if (!isPressing || true)
             {
                 if (PressingKey != unchecked((VirtualKeyCode)(-1)))
                 {
@@ -308,15 +410,24 @@ namespace Exceed
                 }
                 else if (LBDown)
                 {
-                    Win32.mouse_event(Win32.LBDOWN, 0, 0, 0, 0);
+                    if (!isPressing)
+                    {
+                        Win32.mouse_event(Win32.LBDOWN, 0, 0, 0, 0);
+                    }
                 }
                 else if (RBDown)
                 {
-                    Win32.mouse_event(Win32.RBDOWN, 0, 0, 0, 0);
+                    if (!isPressing)
+                    {
+                        Win32.mouse_event(Win32.RBDOWN, 0, 0, 0, 0);
+                    }
                 }
                 else if (MBDown)
                 {
-                    Win32.mouse_event(Win32.MBDOWN, 0, 0, 0, 0);
+                    if (!isPressing)
+                    {
+                        Win32.mouse_event(Win32.MBDOWN, 0, 0, 0, 0);
+                    }
                 }
                 else
                 {
@@ -346,7 +457,7 @@ namespace Exceed
                     {
                         Win32.mouse_event(Win32.WHEEL, 0, 0, unchecked((uint)(-120)), 0);
                     }
-                    
+
                 }
                 isPressing = true;
             }
@@ -364,20 +475,23 @@ namespace Exceed
 
         public void UnPress()
         {
-            InputSimulator.SimulateKeyUp(PressingKey);
-            if (LBDown)
+            if (isPressing)
             {
-                Win32.mouse_event(Win32.LBUP, 0, 0, 0, 0);
+                InputSimulator.SimulateKeyUp(PressingKey);
+                if (LBDown)
+                {
+                    Win32.mouse_event(Win32.LBUP, 0, 0, 0, 0);
+                }
+                else if (RBDown)
+                {
+                    Win32.mouse_event(Win32.RBUP, 0, 0, 0, 0);
+                }
+                else if (MBDown)
+                {
+                    Win32.mouse_event(Win32.MBUP, 0, 0, 0, 0);
+                }
+                isPressing = false;
             }
-            else if (RBDown)
-            {
-                Win32.mouse_event(Win32.RBUP, 0, 0, 0, 0);
-            }
-            else if (MBDown)
-            {
-                Win32.mouse_event(Win32.MBUP, 0, 0, 0, 0);
-            }
-            isPressing = false;
         }
 
         public static bool IsNullOrEmpty(Stimulus obj)
@@ -393,7 +507,7 @@ namespace Exceed
             && (obj.YPosDecreased == false)
             && (obj.WheelIncreased == false)
             && (obj.WheelDecreased == false)
-            && !obj.LBDown && !obj.RBDown && !obj.MBDown 
+            && !obj.LBDown && !obj.RBDown && !obj.MBDown
             && (obj.PressingKey == unchecked((VirtualKeyCode)(-1)))) return true;
 
             return false;
