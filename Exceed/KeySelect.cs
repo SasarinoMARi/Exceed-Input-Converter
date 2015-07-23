@@ -44,7 +44,7 @@ namespace Exceed
         {
             if (radioButton1.Checked)
             {
-                if (string.IsNullOrWhiteSpace(comboBox1.Text))
+                if (string.IsNullOrEmpty(comboBox1.Text))
                 {
                     MessageBox.Show("Cant (._. )");
                     return;
@@ -53,7 +53,7 @@ namespace Exceed
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(comboBox3.Text))
+                if (string.IsNullOrEmpty(comboBox3.Text))
                 {
                     MessageBox.Show("Cant (._. )");
                     return;

@@ -11,3 +11,17 @@ C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.Properties.Resou
 C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.csproj.GenerateResource.Cache
 C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.exe
 C:\Users\Tokino\Documents\GitHub\Exceed\Exceed\obj\Debug\Exceed.pdb
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\bin\Debug\Exceed.exe.config
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\bin\Debug\Exceed.exe
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\bin\Debug\Exceed.pdb
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\bin\Debug\InputSimulator.dll
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\bin\Debug\MouseKeyboardActivityMonitor.dll
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\obj\Debug\Exceed.csprojResolveAssemblyReference.cache
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\obj\Debug\Exceed.ExceedMain.resources
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\obj\Debug\Exceed.ExceedSetting.resources
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\obj\Debug\Exceed.KeySelect.resources
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\obj\Debug\Exceed.NewOrder.resources
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\obj\Debug\Exceed.Properties.Resources.resources
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\obj\Debug\Exceed.csproj.GenerateResource.Cache
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\obj\Debug\Exceed.exe
+D:\Documents\GitHub\Exceed-Input-Converter\Exceed\obj\Debug\Exceed.pdb
